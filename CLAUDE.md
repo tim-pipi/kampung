@@ -110,9 +110,9 @@ A full PRD exists (v1.0, approved) — summary of its resolved decisions:
   a plain noun is still correct and was left alone, as were the PRD and the
   `docs/*.md` design docs (historical records, same treatment as
   `docs/newfeature.md`). The GitHub repo was renamed to `tim-pipi/kampung`
-  (GitHub redirects the old URL, so any stale clone keeps working). The local
-  folder is still `housemate-finance` and the Vercel project and Telegram bot
-  names are unchanged — cosmetic only, rename them if they start to grate.
+  (GitHub redirects the old URL, so any stale clone keeps working), and the
+  local folder to `kampung`. The Vercel project and Telegram bot names are
+  unchanged — cosmetic only, rename them if they start to grate.
   Shipped with it: `components/KampungArt.tsx`
   (see code map) and a faint rattan-weave texture on `body::before` in
   `globals.css`, applied globally — scope it to the landing/login pages if it
@@ -191,9 +191,10 @@ src/
   lib/constants.ts    categories, member color palette, fmtSGD()
   components/KampungArt.tsx  hand-authored decorative SVG: KampungSkyline (attap
                       roofs → coconut palm → HDB slabs, used bottom-pinned on the
-                      landing + house-login pages) and KampungMark (house glyph in
-                      the dashboard header lockup, mirrored by app/icon.svg —
-                      keep the two shapes in sync). Colors via fill-accent/
+                      landing + house-login pages) and KampungMark ("Happy Roofs"
+                      ^‿^ logo, small-size cut, in the dashboard header lockup,
+                      mirrored by app/icon.svg — keep the two in sync; masters,
+                      web icons and usage rules live in brand/, see brand/README.md). Colors via fill-accent/
                       fill-accentsoft/fill-paper tokens, never literal hex; all
                       exports aria-hidden (purely decorative, zero client JS)
   app/page.tsx        landing: create house

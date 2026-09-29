@@ -101,27 +101,23 @@ export function KampungSkyline({ className = "" }: ArtProps) {
 }
 
 /**
- * Small attap-roof house glyph for the header lockup. Uses currentColor so it
- * inherits whatever text color it sits beside. Mirrored by src/app/icon.svg,
- * which Next serves as the favicon — keep the two shapes in sync.
+ * The "Happy Roofs" mark (^‿^ — the eyes are two 60° attap roofs) for the
+ * header lockup. Uses currentColor so it inherits whatever text color it sits
+ * beside. This is the heavier small-size cut (brand/svg/kampung-symbol-small-*),
+ * because the header renders it at ~14 px; src/app/icon.svg uses the same cut
+ * on a teal tile — keep the two in sync. Masters + usage rules: brand/.
  */
 export function KampungMark({ className = "" }: ArtProps) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 256 256"
       className={className}
       fill="currentColor"
       aria-hidden="true"
       focusable="false"
       role="presentation"
     >
-      {/* One path with evenodd so the doorway is a genuine hole — it shows
-          whatever sits behind the glyph instead of a hard-coded paper fill. */}
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M12 3 L23 11 L1 11 Z M4 12 h16 v9 H4 Z M9.5 15 h5 v6 h-5 Z"
-      />
+      <path d="M49.44 121.52L82.44 64.52A19 19 0 0 0 49.56 45.48L16.56 102.48A19 19 0 0 0 49.44 121.52ZM49.56 64.52L82.56 121.52A19 19 0 0 0 115.44 102.48L82.44 45.48A19 19 0 0 0 49.56 64.52ZM173.44 121.52L206.44 64.52A19 19 0 0 0 173.56 45.48L140.56 102.48A19 19 0 0 0 173.44 121.52ZM173.56 64.52L206.56 121.52A19 19 0 0 0 239.44 102.48L206.44 45.48A19 19 0 0 0 173.56 64.52ZM204.76 165.94A87 87 0 0 1 51.24 165.94A19 19 0 0 1 84.76 148.06A49 49 0 0 0 171.24 148.06A19 19 0 0 1 204.76 165.94Z" />
     </svg>
   );
 }
