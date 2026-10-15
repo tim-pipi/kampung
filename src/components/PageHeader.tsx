@@ -7,7 +7,8 @@ export function PageHeader({
   description,
   action,
 }: {
-  backHref: string;
+  // Omit on tab-root pages: the bottom nav is the way out, not a back link.
+  backHref?: string;
   backLabel?: string;
   title: string;
   description?: React.ReactNode;
@@ -15,11 +16,13 @@ export function PageHeader({
 }) {
   return (
     <div>
-      <Link href={backHref} className="text-sm text-inkmuted hover:underline">
-        {backLabel}
-      </Link>
-      <div className="mt-2 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">{title}</h1>
+      {backHref && (
+        <Link href={backHref} className="mb-2 inline-block text-sm text-inkmuted hover:underline">
+          {backLabel}
+        </Link>
+      )}
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold tracking-tight">{title}</h1>
         {action}
       </div>
       {description && <p className="mt-1 text-sm text-inkmuted">{description}</p>}

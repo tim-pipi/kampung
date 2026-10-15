@@ -33,7 +33,6 @@ export default async function Events({
   return (
     <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:px-6">
       <PageHeader
-        backHref={`/h/${params.slug}/app`}
         title="Calendar"
         action={
           <Link href={`/h/${params.slug}/app/events/new`} className="btn-primary text-sm">

@@ -8,9 +8,8 @@ import { fmtSGD } from "@/lib/constants";
 import { formatEventDate, formatEventTime } from "@/lib/events";
 import { sgToday } from "@/lib/recurring";
 import { buildFeed } from "@/lib/activity";
-import { SubmitButton } from "@/components/SubmitButton";
 import { ActivityFeed } from "@/components/ActivityFeed";
-import { quickSettle } from "./actions";
+import { MarkPaidForm } from "./mark-paid-form";
 
 // Async server components the dashboard streams in behind <Suspense>
 // boundaries. Callers must already have run requireMember() — these trust the
@@ -75,11 +74,35 @@ export async function BalancesSection({
     .filter((e) => e.date.slice(0, 7) === new Date().toISOString().slice(0, 7))
     .reduce((a, e) => a + e.amountCents, 0);
 
+  // Your own position leads: it's the question you open the app with.
+  const myNet = net[meId] ?? 0;
+  const mine = transfers.filter((t) => (myNet < 0 ? t.from === meId : t.to === meId));
+  const counterparts = mine
+    .map((t) => `${byId.get(myNet < 0 ? t.to : t.from)?.username} ${fmtSGD(t.amountCents)}`)
+    .join(" · ");
+
   return (
     <>
       {/* Balances receipt */}
-      <section className="mt-6 rounded-xl bg-white shadow-card">
-        <div className="flex items-baseline justify-between px-5 pt-4">
+      <section className="mt-6 rounded-xl bg-surface shadow-card">
+        <div className="px-5 pb-4 pt-5">
+          <p className="text-sm text-inkmuted">
+            {myNet < 0 ? "You owe" : myNet > 0 ? "You're owed" : "Your balance"}
+          </p>
+          <p
+            className={`tnum font-display text-4xl font-bold leading-none tracking-tight ${
+              myNet < 0 ? "text-danger" : myNet > 0 ? "text-accentdark" : ""
+            }`}
+          >
+            {myNet === 0 ? "All square" : fmtSGD(Math.abs(myNet))}
+          </p>
+          {counterparts && (
+            <p className="tnum mt-1.5 text-sm text-inkmuted">
+              {myNet < 0 ? "to" : "from"} {counterparts}
+            </p>
+          )}
+        </div>
+        <div className="flex items-baseline justify-between border-t border-line px-5 pt-4">
           <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-inkmuted">
             Balances
           </h2>
@@ -119,7 +142,7 @@ export async function BalancesSection({
               );
             })}
         </ul>
-        <div className="receipt-edge h-3 w-full bg-white" />
+        <div className="receipt-edge h-3 w-full bg-surface" />
       </section>
 
       {/* Suggested settlements */}
@@ -136,15 +159,7 @@ export async function BalancesSection({
                   <strong>{byId.get(t.to)?.username}</strong>{" "}
                   <span className="tnum font-display font-semibold">{fmtSGD(t.amountCents)}</span>
                 </span>
-                <form action={quickSettle}>
-                  <input type="hidden" name="slug" value={slug} />
-                  <input type="hidden" name="from" value={t.from} />
-                  <input type="hidden" name="to" value={t.to} />
-                  <input type="hidden" name="amountCents" value={t.amountCents} />
-                  <SubmitButton className="btn-ghost px-3 py-1 text-sm" pendingLabel="Marking…">
-                    Mark paid
-                  </SubmitButton>
-                </form>
+                <MarkPaidForm slug={slug} from={t.from} to={t.to} amountCents={t.amountCents} />
               </li>
             ))}
           </ul>

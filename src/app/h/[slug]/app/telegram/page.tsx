@@ -13,7 +13,7 @@ export default async function TelegramPage({ params }: { params: { slug: string 
       <PageHeader backHref={`/h/${params.slug}/app/more`} backLabel="← Back" title="Telegram" />
 
       {house.telegramChatId ? (
-        <div className="mt-6 rounded-xl bg-white p-4 shadow-card">
+        <div className="mt-6 rounded-xl bg-surface p-4 shadow-card">
           <p className="text-sm">
             <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-accent align-middle" />
             Connected — the linked group gets activity updates and a weekly digest.
@@ -26,7 +26,7 @@ export default async function TelegramPage({ params }: { params: { slug: string 
           </form>
         </div>
       ) : (
-        <div className="mt-6 rounded-xl bg-white p-4 shadow-card">
+        <div className="mt-6 rounded-xl bg-surface p-4 shadow-card">
           <p className="text-sm text-inkmuted">Not connected.</p>
           {house.telegramLinkCode && (
             <div className="mt-3">

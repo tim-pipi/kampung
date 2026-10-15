@@ -22,7 +22,7 @@ export default async function EditMember({
       >
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">Edit member</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">Edit member</h1>
       {target.id === me.id && (
         <p className="mt-1 text-xs text-inkmuted">Editing your own profile.</p>
       )}

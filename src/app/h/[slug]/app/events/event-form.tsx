@@ -115,7 +115,7 @@ export function EventForm({
             name="allDay"
             defaultChecked={allDay}
             onChange={(e) => setAllDay(e.target.checked)}
-            className="h-4 w-4 accent-[#0E7C6B]"
+            className="h-4 w-4 accent-accent"
           />
           All day
         </label>
@@ -150,7 +150,7 @@ export function EventForm({
               className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                 freq === f.key
                   ? "border-accent bg-accentsoft text-accentdark"
-                  : "border-line bg-white hover:border-accent"
+                  : "border-line bg-surface hover:border-accent"
               }`}
             >
               {f.label}
@@ -190,7 +190,7 @@ export function EventForm({
           type="checkbox"
           name="active"
           defaultChecked={initial?.active ?? true}
-          className="h-4 w-4 accent-[#0E7C6B]"
+          className="h-4 w-4 accent-accent"
         />
         Active (sends reminders)
       </label>

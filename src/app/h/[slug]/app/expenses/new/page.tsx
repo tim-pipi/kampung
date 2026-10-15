@@ -11,7 +11,7 @@ export default async function NewExpense({ params }: { params: { slug: string } 
       <Link href={`/h/${params.slug}/app`} className="text-sm text-inkmuted hover:underline">
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">Add expense</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">Add expense</h1>
       <ExpenseForm
         slug={params.slug}
         meId={me.id}

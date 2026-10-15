@@ -3,7 +3,9 @@ import {
   DEFAULT_FEED_QUERY,
   applyFeedQuery,
   buildFeed,
+  addedOnOtherDay,
   fmtAdded,
+  fmtDay,
   parseFeedQuery,
   type FeedQuery,
 } from "./activity";
@@ -167,5 +169,33 @@ describe("fmtAdded", () => {
 
   it("zero-pads hours and minutes", () => {
     expect(fmtAdded(new Date("2026-01-02T01:03:00Z"))).toBe("2 Jan, 09:03");
+  });
+});
+
+describe("fmtDay", () => {
+  const now = new Date("2026-10-15T04:00:00Z");
+  it("drops the year for the current SGT year", () => {
+    expect(fmtDay("2026-10-04", now)).toBe("4 Oct");
+  });
+  it("keeps the year for other years", () => {
+    expect(fmtDay("2025-12-31", now)).toBe("31 Dec 2025");
+  });
+  it("uses the SGT year at the UTC/SGT new-year boundary", () => {
+    // 31 Dec 17:00 UTC is already 1 Jan 2027 in Singapore.
+    expect(fmtDay("2027-01-01", new Date("2026-12-31T17:00:00Z"))).toBe("1 Jan");
+  });
+});
+
+describe("addedOnOtherDay", () => {
+  it("is false when entered on the item's own SGT day", () => {
+    expect(addedOnOtherDay(new Date("2026-10-15T04:00:00Z"), "2026-10-15")).toBe(false);
+  });
+  it("is true for a backdated item", () => {
+    expect(addedOnOtherDay(new Date("2026-10-15T04:00:00Z"), "2026-10-12")).toBe(true);
+  });
+  it("compares in SGT, not UTC", () => {
+    // 16:30 UTC on the 14th is 00:30 on the 15th in Singapore.
+    expect(addedOnOtherDay(new Date("2026-10-14T16:30:00Z"), "2026-10-15")).toBe(false);
+    expect(addedOnOtherDay(new Date("2026-10-14T16:30:00Z"), "2026-10-14")).toBe(true);
   });
 });

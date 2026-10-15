@@ -11,7 +11,7 @@ export default function Home() {
       <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">
         Kampung
       </p>
-      <h1 className="mt-3 font-display text-4xl font-bold leading-tight">
+      <h1 className="mt-3 font-display text-4xl font-bold tracking-tight leading-tight">
         One link for the whole flat.
       </h1>
       <p className="mt-4 text-inkmuted">

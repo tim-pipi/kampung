@@ -25,7 +25,7 @@ export default async function EditEvent({
       <Link href={`/h/${params.slug}/app/events`} className="text-sm text-inkmuted hover:underline">
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">Edit event</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">Edit event</h1>
       <EventForm
         slug={params.slug}
         initial={{

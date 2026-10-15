@@ -98,8 +98,10 @@ A full PRD exists (v1.0, approved) — summary of its resolved decisions:
   which would need `expense_shares` loaded into the feed; revisit if the
   house wants "involved in". Category is expenses-only, so it hides
   settlements (and is disabled in a settlements-only view). Month matches the
-  item's own `date`, not `created_at`. Each row shows an "added 19 Sep, 14:32"
-  stamp (SGT) so the default order isn't confusing next to the visible date.
+  item's own `date`, not `created_at`. A row shows an "added 19 Sep, 14:32"
+  stamp (SGT) only when it was entered on a different SGT day than its own
+  date (`addedOnOtherDay`) — that's the case where the default order would
+  otherwise look wrong; same-day stamps were just noise.
   Filter state is client-side only, not persisted in the URL. No schema
   change. This covers the feed-filter part of M5; monthly summary and CSV
   export are still open.
@@ -348,8 +350,12 @@ vercel.json           crons: "5 16 * * *" (00:05 SGT, bills) and "0 11 * * *" (1
   `cache()`'d ledger fetch. No `loading.tsx` on `/h/[slug]` (login) on
   purpose: it redirects logged-in users to `/app`, and streaming a fallback
   first would turn that fast HTTP redirect into a slower client-side one.
-- UI tokens live in `tailwind.config.ts` (paper/ink/accent teal palette) —
-  reuse them; don't introduce ad-hoc hex values. `.tnum` class for any number
+- UI tokens are CSS variables (RGB channels) in `globals.css`, exposed as
+  Tailwind colors by `tailwind.config.ts` — reuse them; don't introduce ad-hoc
+  hex values. They switch automatically for dark mode and `prefers-contrast:
+  more`, so use `bg-surface` (never `bg-white`) for cards/inputs and
+  `text-onaccent` (never `text-white`) on `bg-accent`. The only literal white
+  is text on member-color avatars (member colors don't change per theme). `.tnum` class for any number
   column (tabular numerals). `fmtSGD()` for all money display.
 - `expense-form.tsx` and `recurring-form.tsx` are near-duplicates by choice —
   they were kept separate rather than abstracted because their divergence
@@ -357,6 +363,28 @@ vercel.json           crons: "5 16 * * *" (00:05 SGT, bills) and "0 11 * * *" (1
   more complex than two files. Feel free to unify only if it genuinely reduces
   code.
 - Member colors assigned round-robin from `MEMBER_COLORS` at join time.
+- **Touch feel:** every tappable element gets an `active:` press state (`.btn`
+  has `active:scale-[0.97]`); hover styles only apply on hover-capable devices
+  (`hoverOnlyWhenSupported` in `tailwind.config.ts`). Tap targets are ≥44px —
+  enlarge the button, not the visible glyph. Fixed-bottom UI must add
+  `env(safe-area-inset-bottom)` (`viewportFit: "cover"` is set in `layout.tsx`).
+  High-frequency toggles (shopping tick, Mark paid) are optimistic via
+  `useOptimistic`, so they don't wait on a possibly-cold Supabase.
+- `PageHeader` shows a back link only on drill-down pages; tab roots
+  (Shopping/Calendar/Activity/More) omit `backHref` — the bottom nav is the
+  way out. Pages under More link back to `/more`, not the dashboard. Log out
+  lives on More (the dashboard avatar links there).
+- **Reduced motion/transparency:** `globals.css` neutralizes press scaling and
+  looping pulse/spin under `prefers-reduced-motion`, but keeps color/opacity
+  transitions; directional animations use `motion-safe:`/`motion-reduce:`
+  variants (calendar paging slides, or fades when reduced). Translucent
+  chrome gets the `.material` class, which goes solid under
+  `prefers-reduced-transparency`.
+- **Calendar on phones:** below `sm`, `events/compact-calendar.tsx` replaces
+  the wide month/week grids (dot grid + selected-day list); the grids
+  render from `sm` up. Both read the same `CalendarData`.
+- Expense delete keeps its `confirm()` dialog on purpose: it's a hard delete,
+  and an Undo would need soft-delete across every balance query (owner's call).
 
 ## Commands & environment
 

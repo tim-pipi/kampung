@@ -3,7 +3,7 @@ import { ActivityFeedSkeleton, PageHeaderSkeleton, SkeletonPage } from "@/compon
 export default function ActivityLoading() {
   return (
     <SkeletonPage className="mx-auto max-w-2xl px-4 pb-24 pt-6 sm:px-6">
-      <PageHeaderSkeleton title="Activity" />
+      <PageHeaderSkeleton withBack={false} title="Activity" />
       <p className="mt-1 text-sm text-inkmuted">Full history of expenses and settlements.</p>
       <div className="mt-4">
         <ActivityFeedSkeleton />

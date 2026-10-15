@@ -19,7 +19,7 @@ export default async function NewEvent({
       <Link href={`/h/${params.slug}/app/events`} className="text-sm text-inkmuted hover:underline">
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">New event</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">New event</h1>
       <EventForm slug={params.slug} defaultDate={defaultDate} />
     </main>
   );
