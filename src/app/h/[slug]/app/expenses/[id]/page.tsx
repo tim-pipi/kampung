@@ -54,7 +54,7 @@ export default async function EditExpense({
       <Link href={`/h/${params.slug}/app`} className="text-sm text-inkmuted hover:underline">
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">Edit expense</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">Edit expense</h1>
       <p className="mt-1 text-xs text-inkmuted">
         Added by {houseMembers.find((m) => m.id === expense.createdBy)?.username ?? "?"}
         {editor ? ` · last edited by ${editor.username}` : ""}

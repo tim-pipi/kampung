@@ -1,10 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { requireMember } from "@/lib/guard";
-import { SubmitButton } from "@/components/SubmitButton";
 import { BalancesSkeleton, DashboardActivitySkeleton } from "@/components/Skeleton";
 import { KampungMark } from "@/components/KampungArt";
-import { logout } from "../actions";
 import { ActivitySection, BalancesSection, UpcomingSection } from "./dashboard-sections";
 
 export const dynamic = "force-dynamic";
@@ -22,26 +20,21 @@ export default async function Dashboard({ params }: { params: { slug: string } }
             <KampungMark className="h-3.5 w-3.5" />
             Kampung
           </p>
-          <h1 className="font-display text-2xl font-bold">{house.name}</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight">{house.name}</h1>
         </div>
-        <div className="flex items-center gap-2">
+        {/* Avatar leads to More, where Log out lives (rarely used, so off the dashboard). */}
+        <Link
+          href={`/h/${params.slug}/app/more`}
+          className="-m-1.5 flex h-11 w-11 items-center justify-center rounded-full transition active:scale-90"
+          aria-label={`Signed in as ${me.username}. Account and more`}
+        >
           <span
             className="inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold text-white"
             style={{ background: me.color }}
-            title={me.username}
           >
             {me.username.slice(0, 1).toUpperCase()}
           </span>
-          <form action={logout}>
-            <input type="hidden" name="slug" value={params.slug} />
-            <SubmitButton
-              className="text-sm text-inkmuted underline-offset-2 hover:underline"
-              pendingLabel="Logging out…"
-            >
-              Log out
-            </SubmitButton>
-          </form>
-        </div>
+        </Link>
       </header>
 
       <Suspense fallback={<BalancesSkeleton />}>
@@ -58,10 +51,10 @@ export default async function Dashboard({ params }: { params: { slug: string } }
         <ActivitySection slug={params.slug} houseId={house.id} houseMembers={houseMembers} />
       </Suspense>
 
-      {/* Add expense FAB — bottom-20 clears the 64px bottom nav bar (h-16) with a margin */}
+      {/* Add expense FAB — 5rem clears the 64px bottom nav bar (h-16) with a margin, plus the home-indicator inset */}
       <Link
         href={`/h/${params.slug}/app/expenses/new`}
-        className="fixed bottom-20 right-6 rounded-full bg-accent px-5 py-3 font-display font-semibold text-white shadow-card transition-colors hover:bg-accentdark"
+        className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 rounded-full bg-accent px-5 py-3 font-display font-semibold text-onaccent shadow-card transition duration-100 hover:bg-accentdark active:scale-95"
       >
         + Add expense
       </Link>

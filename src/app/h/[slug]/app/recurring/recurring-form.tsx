@@ -182,7 +182,7 @@ export function RecurringForm({
               className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                 method === m.key
                   ? "border-accent bg-accentsoft text-accentdark"
-                  : "border-line bg-white hover:border-accent"
+                  : "border-line bg-surface hover:border-accent"
               }`}
             >
               {m.label}
@@ -204,7 +204,7 @@ export function RecurringForm({
                     name={`p_${m.id}`}
                     checked={active}
                     onChange={() => toggle(m.id)}
-                    className="h-4 w-4 accent-[#0E7C6B]"
+                    className="h-4 w-4 accent-accent"
                   />
                   <span className="h-2 w-2 rounded-full" style={{ background: m.color }} />
                   <span className="truncate">{m.username}</span>
@@ -243,7 +243,7 @@ export function RecurringForm({
           type="checkbox"
           name="active"
           defaultChecked={initial?.active ?? true}
-          className="h-4 w-4 accent-[#0E7C6B]"
+          className="h-4 w-4 accent-accent"
         />
         Active (posts automatically each month)
       </label>

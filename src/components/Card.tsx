@@ -14,7 +14,7 @@ export function Card({
   className?: string;
   children: React.ReactNode;
 }) {
-  const surface = flat ? "border border-line" : "bg-white shadow-card";
+  const surface = flat ? "border border-line" : "bg-surface shadow-card";
   return (
     <Tag className={`rounded-xl p-3.5 ${surface} ${muted ? "opacity-60" : ""} ${className}`.trim()}>
       {children}

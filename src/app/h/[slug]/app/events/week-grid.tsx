@@ -41,7 +41,7 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[720px] rounded-xl border border-line bg-white shadow-card">
+      <div className="min-w-[720px] rounded-xl border border-line bg-surface shadow-card">
         {/* Header */}
         <div className="grid grid-cols-[56px_repeat(7,1fr)] border-b border-line">
           <div />
@@ -53,7 +53,7 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
                 <div className="text-inkmuted">{weekday}</div>
                 <div
                   className={`tnum mx-auto mt-0.5 flex h-6 w-6 items-center justify-center rounded-full ${
-                    isToday ? "bg-accent font-semibold text-white" : "text-ink"
+                    isToday ? "bg-accent font-semibold text-onaccent" : "text-ink"
                   }`}
                 >
                   {day}
@@ -65,14 +65,14 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
 
         {/* All-day row */}
         <div className="grid grid-cols-[56px_repeat(7,1fr)] border-b border-line">
-          <div className="py-1 text-right text-[10px] text-inkmuted">All day</div>
+          <div className="py-1 text-right text-xs text-inkmuted">All day</div>
           {days.map(({ date, allDay }) => (
             <div key={date} className="flex flex-col gap-0.5 border-l border-line p-1">
               {allDay.map((occ) => (
                 <Link
                   key={occ.id}
                   href={`/h/${slug}/app/events/${occ.id}`}
-                  className={`truncate rounded border-l-2 bg-accentsoft/60 px-1 py-0.5 text-[11px] hover:bg-accentsoft ${
+                  className={`truncate rounded border-l-2 bg-accentsoft/60 px-1 py-0.5 text-xs hover:bg-accentsoft ${
                     !occ.active ? "opacity-50" : ""
                   }`}
                   style={{ borderLeftColor: occ.color }}
@@ -83,7 +83,7 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
               ))}
               <Link
                 href={`/h/${slug}/app/events/new?date=${date}`}
-                className="text-center text-[10px] text-inkmuted/50 hover:text-accent"
+                className="text-center text-xs text-inkmuted/50 hover:text-accent"
                 aria-label="Add event"
               >
                 +
@@ -98,7 +98,7 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
             {Array.from({ length: 24 }).map((_, h) => (
               <div
                 key={h}
-                className="absolute right-1 -translate-y-1/2 text-[10px] text-inkmuted"
+                className="absolute right-1 -translate-y-1/2 text-xs text-inkmuted"
                 style={{ top: `${h * HOUR_PX}px` }}
               >
                 {hourLabel(h)}
@@ -122,7 +122,7 @@ export function WeekGrid({ slug, data }: { slug: string; data: CalendarData }) {
                 <Link
                   key={b.item.id}
                   href={`/h/${slug}/app/events/${b.item.id}`}
-                  className={`absolute overflow-hidden rounded border-l-2 bg-accentsoft/80 px-1 py-0.5 text-[11px] leading-tight hover:bg-accentsoft ${
+                  className={`absolute overflow-hidden rounded border-l-2 bg-accentsoft/80 px-1 py-0.5 text-xs leading-tight hover:bg-accentsoft ${
                     !b.item.active ? "opacity-50" : ""
                   }`}
                   style={{

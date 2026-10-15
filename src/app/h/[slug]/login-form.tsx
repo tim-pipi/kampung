@@ -28,7 +28,7 @@ export function LoginForm({
               className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                 username === m.username
                   ? "border-accent bg-accentsoft text-accentdark"
-                  : "border-line bg-white text-ink hover:border-accent"
+                  : "border-line bg-surface text-ink hover:border-accent"
               }`}
             >
               <span

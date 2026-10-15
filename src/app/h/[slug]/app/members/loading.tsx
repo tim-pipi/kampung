@@ -6,7 +6,7 @@ export default function MembersLoading() {
       <PageHeaderSkeleton title="Members" />
       <ul className="mt-6 space-y-2" aria-hidden="true">
         {Array.from({ length: 4 }, (_, i) => (
-          <li key={i} className="flex items-center justify-between rounded-xl bg-white p-4 shadow-card">
+          <li key={i} className="flex items-center justify-between rounded-xl bg-surface p-4 shadow-card">
             <div className="flex items-center gap-3">
               <Skeleton className="h-9 w-9 rounded-full" />
               <div className="space-y-1.5">

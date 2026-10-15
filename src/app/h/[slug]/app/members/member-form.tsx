@@ -69,7 +69,7 @@ export function MemberForm({ slug, member }: { slug: string; member: Member }) {
 
       {member.passwordHash && (
         <label className="flex items-center gap-2 text-sm font-medium">
-          <input type="checkbox" name="clearPassword" className="h-4 w-4 accent-[#0E7C6B]" />
+          <input type="checkbox" name="clearPassword" className="h-4 w-4 accent-accent" />
           Remove password (allow login without a password)
         </label>
       )}

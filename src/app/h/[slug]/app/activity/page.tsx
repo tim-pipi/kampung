@@ -15,7 +15,6 @@ export default async function Activity({ params }: { params: { slug: string } })
   return (
     <main className="mx-auto max-w-2xl px-4 pb-24 pt-6 sm:px-6">
       <PageHeader
-        backHref={`/h/${params.slug}/app`}
         title="Activity"
         description="Full history of expenses and settlements."
       />

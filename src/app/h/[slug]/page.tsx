@@ -26,7 +26,7 @@ export default async function HouseLogin({ params }: { params: { slug: string } 
       <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">
         Kampung
       </p>
-      <h1 className="mt-3 font-display text-3xl font-bold">{house.name}</h1>
+      <h1 className="mt-3 font-display text-3xl font-bold tracking-tight">{house.name}</h1>
       <p className="mt-2 text-inkmuted">
         Pick your name or type a new one to join. Password is optional — set one
         the first time if you want to lock your name.

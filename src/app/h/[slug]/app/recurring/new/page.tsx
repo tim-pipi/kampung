@@ -11,7 +11,7 @@ export default async function NewTemplate({ params }: { params: { slug: string }
       <Link href={`/h/${params.slug}/app/recurring`} className="text-sm text-inkmuted hover:underline">
         ← Back
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-bold">New recurring bill</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">New recurring bill</h1>
       <RecurringForm
         slug={params.slug}
         meId={me.id}

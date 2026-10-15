@@ -102,6 +102,30 @@ export function fmtAdded(d: Date): string {
   return `${Number(p.day)} ${MONTHS[Number(p.month) - 1]}, ${p.hour}:${p.minute}`;
 }
 
+const SGT_YEAR = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Singapore", year: "numeric" });
+const SGT_YMD = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Singapore",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+// The "added" stamp only earns its line when it says something the row's date
+// doesn't: the item was entered (SGT) on a different day than its own date,
+// e.g. a backdated expense surfacing at the top of the recently-added feed.
+export function addedOnOtherDay(createdAt: Date, ymd: string): boolean {
+  const p = Object.fromEntries(SGT_YMD.formatToParts(createdAt).map((x) => [x.type, x.value]));
+  return `${p.year}-${p.month}-${p.day}` !== ymd;
+}
+
+// "14 Oct" for a stored YYYY-MM-DD date; the year is added only when it isn't
+// the current SGT year, so last year's rows stay unambiguous.
+export function fmtDay(ymd: string, now: Date = new Date()): string {
+  const [y, m, d] = ymd.split("-");
+  const base = `${Number(d)} ${MONTHS[Number(m) - 1]}`;
+  return y === SGT_YEAR.format(now) ? base : `${base} ${y}`;
+}
+
 // Server actions receive arbitrary client input; coerce it to a valid query
 // rather than trusting it. Bad fields fall back to the default, never throw.
 export function parseFeedQuery(raw: unknown): FeedQuery {

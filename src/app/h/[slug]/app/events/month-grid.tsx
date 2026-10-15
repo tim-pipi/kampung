@@ -9,7 +9,7 @@ export function MonthGrid({ slug, data }: { slug: string; data: CalendarData }) 
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[640px] rounded-xl border-l border-t border-line bg-white shadow-card">
+      <div className="min-w-[640px] rounded-xl border-l border-t border-line bg-surface shadow-card">
         <div className="grid grid-cols-7 border-b border-line text-center text-xs font-medium text-inkmuted">
           {WEEKDAY_LABELS.map((label) => (
             <div key={label} className="border-r border-line py-1.5">
@@ -30,20 +30,20 @@ export function MonthGrid({ slug, data }: { slug: string; data: CalendarData }) 
               <div
                 key={date}
                 className={`flex min-h-[96px] flex-col gap-1 border-b border-r border-line p-1.5 text-xs ${
-                  inMonth ? "bg-white" : "bg-paper/60"
+                  inMonth ? "bg-surface" : "bg-paper/60"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span
                     className={`tnum inline-flex h-5 w-5 items-center justify-center rounded-full ${
-                      isToday ? "bg-accent font-semibold text-white" : inMonth ? "text-ink" : "text-inkmuted/50"
+                      isToday ? "bg-accent font-semibold text-onaccent" : inMonth ? "text-ink" : "text-inkmuted/50"
                     }`}
                   >
                     {day}
                   </span>
                   <Link
                     href={`/h/${slug}/app/events/new?date=${date}`}
-                    className="px-1 text-inkmuted/50 hover:text-accent"
+                    className="-m-1 flex h-7 w-7 items-center justify-center rounded-full text-base text-inkmuted/50 hover:text-accent active:bg-accentsoft"
                     aria-label="Add event"
                   >
                     +
@@ -64,7 +64,7 @@ export function MonthGrid({ slug, data }: { slug: string; data: CalendarData }) 
                       {occ.title}
                     </Link>
                   ))}
-                  {overflow > 0 && <span className="px-1 text-[10px] text-inkmuted">+{overflow} more</span>}
+                  {overflow > 0 && <span className="px-1 text-xs text-inkmuted">+{overflow} more</span>}
                 </div>
               </div>
             );

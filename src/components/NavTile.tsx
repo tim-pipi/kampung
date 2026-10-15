@@ -15,7 +15,7 @@ export function NavTile({
   return (
     <Link
       href={href}
-      className="flex flex-col gap-0.5 rounded-xl border border-line bg-white p-3.5 transition-colors hover:border-accent hover:bg-accentsoft/40"
+      className="flex flex-col gap-0.5 rounded-xl border border-line bg-surface p-3.5 transition hover:border-accent hover:bg-accentsoft/40 active:scale-[0.98] active:bg-accentsoft/60"
     >
       <span className="flex items-center gap-2 font-display text-sm font-semibold">
         {label}

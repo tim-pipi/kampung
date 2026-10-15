@@ -179,7 +179,7 @@ export function ExpenseForm({
               className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                 method === m.key
                   ? "border-accent bg-accentsoft text-accentdark"
-                  : "border-line bg-white hover:border-accent"
+                  : "border-line bg-surface hover:border-accent"
               }`}
             >
               {m.label}
@@ -195,13 +195,13 @@ export function ExpenseForm({
             const active = participants.includes(m.id);
             return (
               <li key={m.id} className="flex items-center gap-3">
-                <label className="flex w-32 items-center gap-2 text-sm font-medium">
+                <label className="flex min-h-11 w-32 items-center gap-2 text-sm font-medium">
                   <input
                     type="checkbox"
                     name={`p_${m.id}`}
                     checked={active}
                     onChange={() => toggle(m.id)}
-                    className="h-4 w-4 accent-[#0E7C6B]"
+                    className="h-4 w-4 accent-accent"
                   />
                   <span className="h-2 w-2 rounded-full" style={{ background: m.color }} />
                   <span className="truncate">{m.username}</span>

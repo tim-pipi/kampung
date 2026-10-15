@@ -19,12 +19,20 @@ export function SkeletonPage({ className, children }: { className: string; child
 
 // PageHeader-shaped placeholder. `title` is static per route, so render it
 // for real — immediate confirmation that the tap landed on the right page.
-export function PageHeaderSkeleton({ title, withAction = false }: { title: string; withAction?: boolean }) {
+export function PageHeaderSkeleton({
+  title,
+  withAction = false,
+  withBack = true,
+}: {
+  title: string;
+  withAction?: boolean;
+  withBack?: boolean;
+}) {
   return (
     <div>
-      <Skeleton className="h-4 w-36" />
-      <div className="mt-2 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">{title}</h1>
+      {withBack && <Skeleton className="mb-2 h-4 w-36" />}
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold tracking-tight">{title}</h1>
         {withAction && <Skeleton className="h-9 w-32 rounded-lg" />}
       </div>
     </div>
@@ -36,7 +44,7 @@ export function CardListSkeleton({ rows = 4, className = "mt-2" }: { rows?: numb
   return (
     <ul className={`space-y-2 ${className}`} aria-hidden="true">
       {Array.from({ length: rows }, (_, i) => (
-        <li key={i} className="flex items-center justify-between rounded-xl bg-white p-3.5 shadow-card">
+        <li key={i} className="flex items-center justify-between rounded-xl bg-surface p-3.5 shadow-card">
           <div className="space-y-2">
             <Skeleton className="h-4 w-40" />
             <Skeleton className="h-3 w-56" />
@@ -58,8 +66,12 @@ export function SectionTitleSkeleton({ title }: { title: string }) {
 
 export function BalancesSkeleton() {
   return (
-    <section className="mt-6 rounded-xl bg-white shadow-card" aria-hidden="true">
-      <div className="flex items-baseline justify-between px-5 pt-4">
+    <section className="mt-6 rounded-xl bg-surface shadow-card" aria-hidden="true">
+      <div className="px-5 pb-4 pt-5">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="mt-1.5 h-9 w-40" />
+      </div>
+      <div className="flex items-baseline justify-between border-t border-line px-5 pt-4">
         <SectionTitleSkeleton title="Balances" />
         <Skeleton className="h-3 w-32" />
       </div>
@@ -74,7 +86,7 @@ export function BalancesSkeleton() {
           </li>
         ))}
       </ul>
-      <div className="receipt-edge h-3 w-full bg-white" />
+      <div className="receipt-edge h-3 w-full bg-surface" />
     </section>
   );
 }
@@ -114,7 +126,7 @@ export function ShoppingListSkeleton() {
       <SectionTitleSkeleton title="Needed" />
       <ul className="mt-2 space-y-2" aria-hidden="true">
         {Array.from({ length: 4 }, (_, i) => (
-          <li key={i} className="flex items-center gap-3 rounded-xl bg-white p-3.5 shadow-card">
+          <li key={i} className="flex items-center gap-3 rounded-xl bg-surface p-3.5 shadow-card">
             <Skeleton className="h-5 w-5 shrink-0 rounded-full" />
             <Skeleton className="h-4 flex-1" />
             <Skeleton className="h-3 w-24 shrink-0" />
@@ -142,17 +154,31 @@ export function CalendarSkeleton() {
     <div aria-hidden="true">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-9 rounded-lg" />
-          <Skeleton className="h-8 w-16 rounded-lg" />
-          <Skeleton className="h-8 w-9 rounded-lg" />
+          <Skeleton className="h-11 w-11 rounded-lg" />
+          <Skeleton className="h-11 w-16 rounded-lg" />
+          <Skeleton className="h-11 w-11 rounded-lg" />
           <Skeleton className="h-6 w-32" />
         </div>
         <div className="flex gap-1.5">
-          <Skeleton className="h-8 w-16 rounded-full" />
-          <Skeleton className="h-8 w-16 rounded-full" />
+          <Skeleton className="h-11 w-20 rounded-full" />
+          <Skeleton className="h-11 w-20 rounded-full" />
         </div>
       </div>
-      <Skeleton className="mt-4 h-[28rem] w-full rounded-xl" />
+      {/* Phone: mirrors CompactCalendar (dot grid + selected-day list). */}
+      <div className="mt-4 sm:hidden">
+        <div className="rounded-xl bg-surface p-2 shadow-card">
+          <div className="grid grid-cols-7 gap-y-1 py-1">
+            {Array.from({ length: 35 }, (_, i) => (
+              <div key={i} className="flex h-12 items-center justify-center">
+                <Skeleton className="h-7 w-7 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <Skeleton className="mt-4 h-4 w-20" />
+        <CardListSkeleton rows={2} />
+      </div>
+      <Skeleton className="mt-4 hidden h-[28rem] w-full rounded-xl sm:block" />
     </div>
   );
 }
@@ -163,7 +189,7 @@ export function FormPageSkeleton({ title, fields = 5 }: { title: string; fields?
   return (
     <SkeletonPage className="mx-auto max-w-xl px-4 py-6 sm:px-6">
       <Skeleton className="h-4 w-14" />
-      <h1 className="mt-2 font-display text-2xl font-bold">{title}</h1>
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">{title}</h1>
       <div className="mt-6 space-y-5">
         {Array.from({ length: fields }, (_, i) => (
           <div key={i} className="space-y-2">

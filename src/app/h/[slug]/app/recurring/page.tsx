@@ -29,7 +29,8 @@ export default async function Recurring({ params }: { params: { slug: string } }
   return (
     <main className="mx-auto max-w-2xl px-4 pb-24 pt-6 sm:px-6">
       <PageHeader
-        backHref={`/h/${params.slug}/app`}
+        backHref={`/h/${params.slug}/app/more`}
+        backLabel="← Back"
         title="Recurring bills"
         action={
           <Link href={`/h/${params.slug}/app/recurring/new`} className="btn-primary text-sm">

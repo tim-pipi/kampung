@@ -17,7 +17,7 @@ export default async function MembersPage({ params }: { params: { slug: string }
         {houseMembers.map((m) => (
           <li
             key={m.id}
-            className="flex items-center justify-between rounded-xl bg-white p-4 shadow-card"
+            className="flex items-center justify-between rounded-xl bg-surface p-4 shadow-card"
           >
             <div className="flex items-center gap-3">
               <span
