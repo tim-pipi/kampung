@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/SubmitButton";
 import { saveEvent, deleteEvent, type FormState } from "./actions";
 import type { Recurrence } from "@/lib/events";
+import { EVENT_CATEGORIES, type EventCategory } from "@/lib/event-categories";
 
 const FREQ_OPTIONS: { key: Recurrence["freq"]; label: string }[] = [
   { key: "none", label: "Once" },
@@ -18,12 +19,14 @@ export function EventForm({
   slug,
   initial,
   defaultDate,
+  returnToList = false,
 }: {
   slug: string;
   initial?: {
     eventId: number;
     title: string;
     note: string;
+    category: EventCategory;
     nextDate: string;
     startTime: string | null;
     endTime: string | null;
@@ -32,10 +35,13 @@ export function EventForm({
     recurrence: Recurrence;
   };
   defaultDate?: string;
+  // Opened from the List view: save/delete redirect back to it (see saveEvent).
+  returnToList?: boolean;
 }) {
   const router = useRouter();
   const [state, formAction] = useFormState<FormState, FormData>(saveEvent, undefined);
   const [freq, setFreq] = useState<Recurrence["freq"]>(initial?.recurrence.freq ?? "none");
+  const [category, setCategory] = useState<EventCategory>(initial?.category ?? "Other");
   const [nextDate, setNextDate] = useState(initial?.nextDate ?? defaultDate ?? "");
   const [monthlyDay, setMonthlyDay] = useState(
     initial?.recurrence.freq === "monthly" ? initial.recurrence.day : 1
@@ -54,6 +60,8 @@ export function EventForm({
     <form action={formAction} className="mt-6 flex flex-col gap-4">
       <input type="hidden" name="slug" value={slug} />
       {initial && <input type="hidden" name="eventId" value={initial.eventId} />}
+      {returnToList && <input type="hidden" name="returnTo" value="list" />}
+      <input type="hidden" name="category" value={category} />
       <input type="hidden" name="freq" value={freq} />
       {freq === "monthly" && <input type="hidden" name="monthlyDay" value={monthlyDay} />}
       {freq === "months" && <input type="hidden" name="monthsInterval" value={monthsInterval} />}
@@ -78,6 +86,27 @@ export function EventForm({
           maxLength={200}
         />
       </label>
+
+      <fieldset>
+        <legend className="text-sm font-medium">Category</legend>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {EVENT_CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              aria-pressed={category === c}
+              onClick={() => setCategory(c)}
+              className={`h-11 rounded-full border px-4 text-sm font-medium transition active:scale-95 ${
+                category === c
+                  ? "border-accent bg-accentsoft text-accentdark"
+                  : "border-line bg-surface hover:border-accent"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </fieldset>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1 text-sm font-medium">

@@ -76,6 +76,19 @@ A full PRD exists (v1.0, approved) — summary of its resolved decisions:
   `next_date`/`last_reminded_on`/`runEventScan()` are completely unchanged.
   See Invariant 12. No calendar sync (Google/iCal import/export) was added;
   still out of scope.
+  **Event categories + List view:** each event has a `category` (fixed list
+  in `lib/event-categories.ts`: Chores/Bills/Maintenance/Social/Other;
+  existing rows defaulted to Other by migration 0006). The calendar has a
+  single-select category chip filter (client-side, not in the URL, survives
+  Month/Week/List switches) applied once in `calendar-view.tsx` before data
+  reaches any grid. A third **List** view shows one card per event (not per
+  occurrence) with full details and an Edit link carrying `?from=list`, so
+  save/delete/back return to `?view=list`; `saveEvent`/`deleteEvent` only
+  honour the literal `returnTo=list`. Categories are calendar-only —
+  reminders, digest and Telegram messages never read them. Event colours
+  still come from the creator's member colour, not the category. Planned
+  follow-up: a rotating chore roster with Telegram ✅ Done buttons (one-line
+  messages), likely built on the Chores category.
 - **Bottom navigation (persistent tab bar)** replaced the dashboard's "Go to"
   tile grid with a 5-tab bar (Home/Shopping/Calendar/Activity/More) that
   stays visible across every browse/list page (hidden on create/edit forms).
@@ -176,6 +189,8 @@ src/
   lib/date-strings.ts parseDate/fmtDate/addDays — zero-dependency Y-M-D string math,
                       the one shared implementation lib/events.ts and
                       lib/calendar-grid.ts both build on
+  lib/event-categories.ts EVENT_CATEGORIES, isEventCategory(), filterByCategory()
+                      — client-safe (no db imports), unit-tested
   lib/calendar-grid.ts getMonthGridDates(), getWeekDates(), layoutDayTimedBlocks()
                       — pure month/week grid + timed-block layout math, no DB,
                       no knowledge of house_events; safe to import from client
@@ -240,8 +255,9 @@ src/
                       destinations that don't fit the primary 5-tab nav bar,
                       reusing components/NavTile.tsx in the same grid pattern
                       the dashboard used to render before this moved here
-    events/           Month/Week calendar-grid UI (calendar-view.tsx client shell,
-                      month-grid.tsx, week-grid.tsx) + new/edit form (event-form.tsx,
+    events/           Month/Week/List calendar UI (calendar-view.tsx client shell
+                      with the category filter, month-grid.tsx, week-grid.tsx,
+                      event-list.tsx) + new/edit form (event-form.tsx,
                       with an all-day toggle and optional start/end time) —
                       saveEvent/deleteEvent/getCalendarData actions (saveEvent's
                       create branch also notifyHouse(); edits are silent).
@@ -423,8 +439,8 @@ new file in `drizzle/` → run `db:migrate` against prod → deploy.
   reference them, so `/h/[slug]/app/members` only supports soft-delete via
   the `active` flag (`toggleMemberActive`). Deactivated members are hidden
   from new expenses but their history and balances remain.
-- vitest is set up (`npm run test`) but so far only `lib/activity.ts` has
-  tests (`activity.test.ts`); nothing runs them in CI yet. Split/balance math
+- vitest is set up (`npm run test`) but so far only `lib/activity.ts` and
+  `lib/event-categories.ts` have tests; nothing runs them in CI yet. Split/balance math
   was verified with ad-hoc tsx scripts. **Good next task: turn those into real
   vitest tests for `lib/split.ts`, `lib/balances.ts`, `lib/recurring.ts`** —
   they're pure functions and the highest-stakes code in the app. Use

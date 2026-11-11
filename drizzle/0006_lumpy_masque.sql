@@ -1,0 +1,1 @@
+ALTER TABLE "house_events" ADD COLUMN "category" text DEFAULT 'Other' NOT NULL;

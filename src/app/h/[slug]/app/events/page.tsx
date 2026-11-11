@@ -5,7 +5,7 @@ import { sgToday } from "@/lib/recurring";
 import { fmtDate } from "@/lib/date-strings";
 import { PageHeader } from "@/components/PageHeader";
 import { CalendarSkeleton } from "@/components/Skeleton";
-import { buildCalendarData, type CalendarViewMode } from "./calendar-data";
+import { buildCalendarData, parseViewMode, type CalendarViewMode } from "./calendar-data";
 import { CalendarView } from "./calendar-view";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ export default async function Events({
 }) {
   const { house } = await requireMember(params.slug);
 
-  const view: CalendarViewMode = searchParams.view === "week" ? "week" : "month";
+  const view = parseViewMode(searchParams.view);
   const anchorDate =
     searchParams.date && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.date)
       ? searchParams.date

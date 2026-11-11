@@ -3,18 +3,49 @@ import { houseEvents, members } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { sgToday } from "@/lib/recurring";
 import { getMonthGridDates, getWeekDates } from "@/lib/calendar-grid";
-import { projectOccurrences, formatEventTime, fmtDate, type Recurrence } from "@/lib/events";
+import {
+  projectOccurrences,
+  formatEventDate,
+  formatEventTime,
+  describeRecurrence,
+  fmtDate,
+  type Recurrence,
+} from "@/lib/events";
+import { isEventCategory, type EventCategory } from "@/lib/event-categories";
 
-export type CalendarViewMode = "month" | "week";
+export type CalendarViewMode = "month" | "week" | "list";
+
+// Untrusted view strings (URL, client action args) collapse to "month".
+export function parseViewMode(v: unknown): CalendarViewMode {
+  return v === "week" || v === "list" ? v : "month";
+}
 
 export type CalendarOccurrence = {
   id: number;
   title: string;
   note: string | null;
+  category: EventCategory;
   active: boolean;
   startTime: string | null;
   endTime: string | null;
   timeLabel: string | null;
+  color: string;
+};
+
+// One row per event (not per occurrence) for the List view. Display strings are
+// built here because describeRecurrence lives in server-only lib/events.ts.
+export type CalendarListItem = {
+  id: number;
+  title: string;
+  note: string | null;
+  category: EventCategory;
+  active: boolean;
+  nextDate: string;
+  dateLabel: string; // "Sat 8 Aug"
+  timeLabel: string | null; // null = all day
+  recurrenceLabel: string; // "one-off", "monthly on day 1", ...
+  reminderLabel: string; // "1 day before", "on the day"
+  addedBy: string;
   color: string;
 };
 
@@ -24,7 +55,14 @@ export type CalendarData = {
   gridDates: string[];
   todayDate: string;
   occurrencesByDate: Record<string, CalendarOccurrence[]>;
+  // Active events soonest-first, then paused/finished ones soonest-first.
+  eventList: CalendarListItem[];
 };
+
+function reminderLabel(days: number): string {
+  if (days === 0) return "on the day";
+  return `${days} day${days === 1 ? "" : "s"} before`;
+}
 
 // Shared by events/page.tsx (initial server-rendered load) and the
 // getCalendarData action (client-side nav) so there's one fetch+project path.
@@ -42,7 +80,9 @@ export async function buildCalendarData(
   const todayDate = fmtDate(year, month, day);
 
   const [ay, am] = anchorDate.split("-").map(Number);
-  const gridDates = view === "month" ? getMonthGridDates(ay, am) : getWeekDates(anchorDate);
+  // List view still gets the anchor's month grid, so switching back to Month/Week
+  // from List never sees an empty grid.
+  const gridDates = view === "week" ? getWeekDates(anchorDate) : getMonthGridDates(ay, am);
   const rangeStart = gridDates[0];
   const rangeEnd = gridDates[gridDates.length - 1];
 
@@ -50,10 +90,12 @@ export async function buildCalendarData(
     db().query.houseEvents.findMany({ where: eq(houseEvents.houseId, houseId) }),
     db().query.members.findMany({
       where: eq(members.houseId, houseId),
-      columns: { id: true, color: true },
+      columns: { id: true, color: true, username: true },
     }),
   ]);
   const colorByMember = new Map(houseMembers.map((m) => [m.id, m.color]));
+  const nameByMember = new Map(houseMembers.map((m) => [m.id, m.username]));
+  const categoryOf = (c: string): EventCategory => (isEventCategory(c) ? c : "Other");
 
   const occurrencesByDate: Record<string, CalendarOccurrence[]> = {};
   for (const date of gridDates) occurrencesByDate[date] = [];
@@ -74,6 +116,7 @@ export async function buildCalendarData(
       id: e.id,
       title: e.title,
       note: e.note,
+      category: categoryOf(e.category),
       active: e.active === 1,
       startTime: e.startTime,
       endTime: e.endTime,
@@ -85,5 +128,30 @@ export async function buildCalendarData(
     }
   }
 
-  return { view, anchorDate, gridDates, todayDate, occurrencesByDate };
+  // Sort on raw fields: "HH:MM" strings order correctly, display labels don't
+  // ("10:00 AM" < "9:00 AM"). All-day ("") sorts before timed on the same date.
+  const eventList: CalendarListItem[] = [...events]
+    .sort(
+      (a, b) =>
+        b.active - a.active ||
+        a.nextDate.localeCompare(b.nextDate) ||
+        (a.startTime ?? "").localeCompare(b.startTime ?? "") ||
+        a.id - b.id
+    )
+    .map((e) => ({
+      id: e.id,
+      title: e.title,
+      note: e.note,
+      category: categoryOf(e.category),
+      active: e.active === 1,
+      nextDate: e.nextDate,
+      dateLabel: formatEventDate(e.nextDate),
+      timeLabel: formatEventTime(e.startTime, e.endTime),
+      recurrenceLabel: describeRecurrence(e.recurrence as Recurrence),
+      reminderLabel: reminderLabel(e.remindDaysBefore),
+      addedBy: nameByMember.get(e.createdBy) ?? "someone",
+      color: colorByMember.get(e.createdBy) ?? "#0E7C6B",
+    }));
+
+  return { view, anchorDate, gridDates, todayDate, occurrencesByDate, eventList };
 }
