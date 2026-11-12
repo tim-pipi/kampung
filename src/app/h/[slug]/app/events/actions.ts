@@ -8,9 +8,16 @@ import { type Recurrence, formatEventDate, formatEventTime } from "@/lib/events"
 import { notifyHouse, renderEventCreatedMessage } from "@/lib/telegram";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { buildCalendarData, type CalendarViewMode } from "./calendar-data";
+import { isEventCategory } from "@/lib/event-categories";
+import { buildCalendarData, parseViewMode, type CalendarViewMode } from "./calendar-data";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+// Where to land after save/delete. Only the literal "list" is honoured, so the
+// form can't steer the redirect anywhere outside this house's calendar.
+function eventsHref(slug: string, formData: FormData): string {
+  return `/h/${slug}/app/events${formData.get("returnTo") === "list" ? "?view=list" : ""}`;
+}
 
 export type FormState = { error?: string } | undefined;
 
@@ -47,6 +54,8 @@ export async function saveEvent(_prev: FormState, formData: FormData): Promise<F
     const title = String(formData.get("title") ?? "").trim();
     if (!title) throw new Error("Enter a title.");
     const note = String(formData.get("note") ?? "").trim() || null;
+    const category = formData.get("category");
+    if (!isEventCategory(category)) throw new Error("Pick a category.");
     const nextDate = String(formData.get("nextDate"));
     if (!/^\d{4}-\d{2}-\d{2}$/.test(nextDate)) throw new Error("Pick a valid date.");
 
@@ -67,7 +76,7 @@ export async function saveEvent(_prev: FormState, formData: FormData): Promise<F
     const active = formData.get("active") === "on" ? 1 : 0;
     const recurrence = parseRecurrence(formData);
 
-    const values = { title, note, nextDate, startTime, endTime, recurrence, remindDaysBefore, active };
+    const values = { title, note, category, nextDate, startTime, endTime, recurrence, remindDaysBefore, active };
 
     if (eventId) {
       const existing = await db().query.houseEvents.findFirst({
@@ -98,7 +107,7 @@ export async function saveEvent(_prev: FormState, formData: FormData): Promise<F
   }
   revalidatePath(`/h/${slug}/app/events`);
   revalidatePath(`/h/${slug}/app`);
-  redirect(`/h/${slug}/app/events`);
+  redirect(eventsHref(slug, formData));
 }
 
 export async function deleteEvent(formData: FormData) {
@@ -110,7 +119,7 @@ export async function deleteEvent(formData: FormData) {
     .where(and(eq(houseEvents.id, id), eq(houseEvents.houseId, house.id)));
   revalidatePath(`/h/${slug}/app/events`);
   revalidatePath(`/h/${slug}/app`);
-  redirect(`/h/${slug}/app/events`);
+  redirect(eventsHref(slug, formData));
 }
 
 // Read action for client-side calendar navigation (prev/next/today/toggle) so
@@ -119,5 +128,5 @@ export async function deleteEvent(formData: FormData) {
 export async function getCalendarData(slug: string, view: CalendarViewMode, anchorDate: string) {
   const { house } = await requireMember(slug);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(anchorDate)) throw new Error("Invalid anchor date.");
-  return buildCalendarData(house.id, view, anchorDate);
+  return buildCalendarData(house.id, parseViewMode(view), anchorDate);
 }

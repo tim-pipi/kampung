@@ -123,6 +123,9 @@ export const houseEvents = pgTable("house_events", {
     .references(() => houses.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   note: text("note"),
+  // One of EVENT_CATEGORIES in lib/event-categories.ts (validated in saveEvent).
+  // Used only for calendar filtering — reminders/digest never read it.
+  category: text("category").notNull().default("Other"),
   nextDate: date("next_date").notNull(),
   // "HH:MM" 24-hour strings, see formatEventTime in lib/events.ts. Both null = all-day.
   startTime: text("start_time"),
